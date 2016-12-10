@@ -1,0 +1,67 @@
+package org.panda.servlet;
+
+import java.io.IOException;
+
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.project.panda.*;
+
+/**
+ * Servlet implementation class UserLogin
+ */
+@WebServlet("/UserLogin")
+public class UserLogin extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public UserLogin() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		String uname, pass;
+		
+		response.setContentType("text/html");  
+        //PrintWriter out=response.getWriter(); 
+		
+		uname = request.getParameter("username");
+		pass =  request.getParameter("pwd");
+		
+		System.out.println(uname+ " "+ pass);
+		HttpSession session = request.getSession(true);
+		ULogin ul = new ULogin();
+		
+		String result = ul.CheckLogin(uname, pass);
+		System.out.println(result);
+		//boolean result = true;
+		if(result!="" || result!=null){
+			session.setAttribute("UserName", result);
+			response.sendRedirect("UserHome.jsp");
+			return;
+		}
+		else{
+			session.invalidate();
+			request.setAttribute("errorMessage", "Invalid user or password");
+			RequestDispatcher rd = request.getRequestDispatcher("UserLogin.jsp");
+            rd.forward(request, response);
+		}
+		
+
+	}
+
+}
